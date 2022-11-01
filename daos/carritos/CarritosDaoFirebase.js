@@ -10,15 +10,15 @@ import {
 import { db } from "../../config/firebase.js";
 import { ContenedorFirebase } from "../../contenedores/ContenedorFirebase.js";
 
-export class CarritosDaoFB extends ContenedorFirebase {
-  async agregarCarrito(carrito) {
+export default class CarritosDaoFB extends ContenedorFirebase {
+  async agregarCarrito() {
     try {
       const agregado = await addDoc(collection(db, "carritos"), {
-        id: carrito.id,
+        id: Date.now(),
         timestampCarrito: Date.now(),
-        productos: carrito.productos,
+        productos: [],
       });
-      console.log(agregado);
+      return agregado;
     } catch (err) {
       console.log(err);
     }
@@ -53,7 +53,7 @@ export class CarritosDaoFB extends ContenedorFirebase {
   async borrarCarrito(id) {
     deleteDoc(doc(db, "carritos", id))
       .then(() => {
-        console.log("Carrito eliminado");
+        return { msg: `Carrito con id ${id} eliminado` };
       })
       .catch((err) => console.log(err));
   }
@@ -79,6 +79,8 @@ export class CarritosDaoFB extends ContenedorFirebase {
       setDoc(doc(db, "carritos", idCarrito), targetCarrito, {
         merge: true,
       });
+
+      return borrado;
     }
   }
 }
