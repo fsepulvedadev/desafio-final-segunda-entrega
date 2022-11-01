@@ -8,7 +8,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 
-export class ProductosDaoFirebase extends ContenedorFirebase {
+export default class ProductosDaoFirebase extends ContenedorFirebase {
   async agregarProductos(producto) {
     let nuevoProducto = {
       id: producto.id || Date.now(),
@@ -32,7 +32,6 @@ export class ProductosDaoFirebase extends ContenedorFirebase {
   async editarProducto(id, newProducto) {
     const target = await this.listar(id);
 
-    target.codigo = newProducto.codigo;
     target.desc = newProducto.desc;
     target.foto = newProducto.foto;
     target.nombre = newProducto.nombre;
@@ -40,13 +39,18 @@ export class ProductosDaoFirebase extends ContenedorFirebase {
     target.stock = newProducto.stock;
 
     updateDoc(doc(db, "productos", id), target)
-      .then((data) => console.log("Producto actualizado"))
+      .then((data) => {
+        console.log("Producto actualizado");
+        return target;
+      })
       .catch((err) => console.log(err));
   }
 
   async borrarProducto(id) {
     deleteDoc(doc(db, "productos", id))
-      .then((data) => console.log("El producto ha sido eliminado."))
+      .then((data) => {
+        return { msg: `El producto con id ${id} ha sido eliminado.` };
+      })
       .catch((err) => console.log(err));
   }
 }

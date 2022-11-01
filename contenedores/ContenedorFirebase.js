@@ -16,6 +16,7 @@ export class ContenedorFirebase {
     try {
       const objs = await getDocs(collection(db, this.nombreCol));
       const respuesta = objs.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      console.log(respuesta);
       return respuesta;
     } catch (err) {
       console.log(err);
